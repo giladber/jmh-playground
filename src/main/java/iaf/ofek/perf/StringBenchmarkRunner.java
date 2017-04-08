@@ -36,6 +36,7 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.openjdk.jmh.runner.options.TimeValue;
 
 public class StringBenchmarkRunner {
 
@@ -44,8 +45,9 @@ public class StringBenchmarkRunner {
                 .addProfiler(GCProfiler.class)
                 .measurementIterations(15)
                 .warmupIterations(10)
+                .measurementTime(TimeValue.seconds(3))
                 .forks(3)
-                .jvmArgs("-Xms1g", "-Xmx1g", "-Xmn800m")
+                .jvmArgs("-Xms1g", "-Xmx1g", "-Xmn800m", "-server")
                 .include(StringBenchmark.class.getSimpleName())
                 .build();
 

@@ -9,13 +9,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by giladrber on 3/29/2017.
  */
-@BenchmarkMode(Mode.SampleTime)
+@BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @State(Scope.Thread)
 public class RandomBenchmark {
 
     Random rnd;
-    ThreadLocalRandom tlr;
 
     @Setup(Level.Iteration)
     public void setup() {
@@ -23,14 +22,14 @@ public class RandomBenchmark {
     }
 
     @Benchmark
-    @GroupThreads(1)
+    @GroupThreads(8)
     public long standardRandom()
     {
         return rnd.nextLong();
     }
 
     @Benchmark
-    @GroupThreads(1)
+    @GroupThreads(8)
     public long tlRandom() {
         return ThreadLocalRandom.current().nextLong();
     }
@@ -39,7 +38,7 @@ public class RandomBenchmark {
     /*
      * Not many people are aware of the difference between Random and ThreadLocalRandom, let alone of the existence
      * of ThreadLocalRandom.
-     * Using random incurs a synchronizatiob overhead which ThreadLocalRandom helps avoid.
+     * Using random incurs a synchronization overhead which ThreadLocalRandom helps avoid.
      * This benchmark demonstrates why using TLR is always better (even in the non-contended case).
      *
      * Basic results: (2 threads)
@@ -54,9 +53,6 @@ public class RandomBenchmark {
     RandomBenchmark.standardRandom:standardRandom·p0.999   sample               11.840           us/op
     RandomBenchmark.standardRandom:standardRandom·p0.9999  sample              249.252           us/op
     RandomBenchmark.standardRandom:standardRandom·p1.00    sample           206569.472           us/op
-    RandomBenchmark.standardRandom:·gc.alloc.rate          sample       45       0.384 ± 0.021  MB/sec
-    RandomBenchmark.standardRandom:·gc.alloc.rate.norm     sample       45       0.044 ± 0.005    B/op
-    RandomBenchmark.standardRandom:·gc.count               sample       45         ≈ 0          counts
     RandomBenchmark.tlRandom                               sample  2822656       0.186 ± 0.016   us/op
     RandomBenchmark.tlRandom:tlRandom·p0.00                sample                  ≈ 0           us/op
     RandomBenchmark.tlRandom:tlRandom·p0.50                sample                  ≈ 0           us/op
@@ -66,9 +62,6 @@ public class RandomBenchmark {
     RandomBenchmark.tlRandom:tlRandom·p0.999               sample                2.368           us/op
     RandomBenchmark.tlRandom:tlRandom·p0.9999              sample               78.464           us/op
     RandomBenchmark.tlRandom:tlRandom·p1.00                sample             4038.656           us/op
-    RandomBenchmark.tlRandom:·gc.alloc.rate                sample       45       0.340 ± 0.018  MB/sec
-    RandomBenchmark.tlRandom:·gc.alloc.rate.norm           sample       45       0.016 ± 0.002    B/op
-    RandomBenchmark.tlRandom:·gc.count                     sample       45         ≈ 0          counts
 
      * .. But the histogram tells the real story:
      * TLR:
@@ -111,9 +104,6 @@ public class RandomBenchmark {
     RandomBenchmark.standardRandom:standardRandom·p0.999   sample               3.156           us/op
     RandomBenchmark.standardRandom:standardRandom·p0.9999  sample              80.896           us/op
     RandomBenchmark.standardRandom:standardRandom·p1.00    sample           33161.216           us/op
-    RandomBenchmark.standardRandom:·gc.alloc.rate          sample       45      0.169 ± 0.011  MB/sec
-    RandomBenchmark.standardRandom:·gc.alloc.rate.norm     sample       45      0.033 ± 0.003    B/op
-    RandomBenchmark.standardRandom:·gc.count               sample       45        ≈ 0          counts
     RandomBenchmark.tlRandom                               sample  1295544      0.139 ± 0.005   us/op
     RandomBenchmark.tlRandom:tlRandom·p0.00                sample                 ≈ 0           us/op
     RandomBenchmark.tlRandom:tlRandom·p0.50                sample                 ≈ 0           us/op
@@ -123,9 +113,6 @@ public class RandomBenchmark {
     RandomBenchmark.tlRandom:tlRandom·p0.999               sample               0.790           us/op
     RandomBenchmark.tlRandom:tlRandom·p0.9999              sample              60.523           us/op
     RandomBenchmark.tlRandom:tlRandom·p1.00                sample             972.800           us/op
-    RandomBenchmark.tlRandom:·gc.alloc.rate                sample       45      0.150 ± 0.010  MB/sec
-    RandomBenchmark.tlRandom:·gc.alloc.rate.norm           sample       45      0.011 ± 0.001    B/op
-    RandomBenchmark.tlRandom:·gc.count                     sample       45        ≈ 0          counts
 
      */
 
